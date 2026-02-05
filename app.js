@@ -65,11 +65,15 @@ function toggleBgEffect(isActive) {
   if (!bgEffect) return;
 
   if (isActive) {
+    // Randomly select image
+    const bgImages = ['howl.gif', 'ghost.gif'];
+    const randomImage = bgImages[Math.floor(Math.random() * bgImages.length)];
+
     // RESTART ANIMATION HACK
     // Toggle background-image to 'none' and back to force restart
     bgEffect.style.backgroundImage = 'none';
     void bgEffect.offsetWidth; // Force Reflow
-    bgEffect.style.backgroundImage = "url('images/howl.gif')";
+    bgEffect.style.backgroundImage = `url('images/${randomImage}')`;
 
     bgEffect.classList.add("active");
     // Flip on new attack
