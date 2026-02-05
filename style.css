@@ -199,6 +199,19 @@ body {
   border: 1px solid var(--primary-color);
 }
 
+.np-shortcut {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 0.65rem;
+  opacity: 0.4;
+  font-family: inherit;
+  font-weight: 700;
+  pointer-events: none;
+  text-transform: uppercase;
+  color: #eee;
+}
+
 /* Specific Active States for Colored Keys */
 .np-btn.btn-qual:active,
 .np-btn.btn-qual.active {

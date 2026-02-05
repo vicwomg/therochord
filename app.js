@@ -14,7 +14,8 @@ const appState = {
     augmented: false,   // '+' key
     majorSeventh: false, // '9' or 'm' key
     halfDiminished: false, // 'x' or 'Backspace'
-    major: false // 'Enter'
+    major: false, // 'Enter'
+    minorSeventh: false // 'c' key
   },
   lastVoicing: null,
   activeVoicings: {},
@@ -25,17 +26,20 @@ const appState = {
 };
 
 // modifier keys
-const dominantModifiers = ["d", "D", "/"];
-const minorModifiers = ["-", "_"];
-const diminishedModifiers = ["o", "O", "*"];
-const majorSixthModifiers = ["s", "S", "8"];
-const augmentedModifiers = ["+", "="];
-const rootShiftDownModifiers = [",", "<", "0"];
-const rootShiftUpModifiers = [".", ">"];
-const majorSeventhModifiers = ["9", "m", "M"];
-const halfDiminishedModifiers = ["x", "X", "Backspace", "Escape"];
+const majorModifiers = ["q", "Q", "Enter"];
+const minorModifiers = ["w", "W", "-"];
+const dominantModifiers = ["e", "E", "/"];
 
-const majorModifiers = ["Enter"];
+const majorSixthModifiers = ["a", "A", "8"];
+const majorSeventhModifiers = ["s", "S", "9"];
+const diminishedModifiers = ["d", "D", "*"];
+
+const augmentedModifiers = ["z", "Z", "+"];
+const halfDiminishedModifiers = ["x", "X", "Escape", "NumLock", "Tab"];
+const minorSeventhModifiers = ["c", "C", "Backspace"];
+
+const rootShiftDownModifiers = ["Alt", "0"];
+const rootShiftUpModifiers = [" ", "."];
 
 const KEY_ORDER = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
 
@@ -132,9 +136,10 @@ function getQualityName(qualitySymbol, baseName) {
     case "m": return "Minor Triad";
     case "dim7": return "Diminished 7th";
     case "6": return "Major 6th";
-    case "7#5": return "Augmented 7th";
-    case "maj7": return "Major 7th";
-    case "m7b5": return "Half-Dim (m7b5)";
+    case "7#5": return "Aug 7";
+    case "maj7": return "Maj 7";
+    case "m7b5": return "m7b5";
+    case "m7": return "Min 7";
     case "M": return "Major";
     default: return baseName; // Fallback
   }
@@ -213,22 +218,25 @@ function getChordWithModifiers(degreeIndex, baseChord) {
   let quality = null;
 
   // Logic:
-  // Dominant ('d') -> 7 (Dominant 7th)
-  if (appState.modifiers.dominant) quality = "7";
-  // Minor ('-') -> m (Minor Triad)
+  // Minor + Dominant -> m7
+  if (appState.modifiers.minor && appState.modifiers.dominant) quality = "m7";
+  // Dominant -> 7 (Dominant 7th)
+  else if (appState.modifiers.dominant) quality = "7";
+  // Minor -> m (Minor Triad)
   else if (appState.modifiers.minor) quality = "m";
-  // Diminished ('o') -> dim7 (Diminished 7th)
+  // Diminished -> dim7 (Diminished 7th)
   else if (appState.modifiers.diminished) quality = "dim7";
-  // Major 6th ('s') -> 6
+  // Major 6th -> 6
   else if (appState.modifiers.majorSixth) quality = "6";
-  // Augmented ('+') -> 7#5 (Augmented 7th)
-  // Augmented ('+') -> 7#5 (Augmented 7th)
+  // Augmented -> 7#5 (Augmented 7th)
   else if (appState.modifiers.augmented) quality = "7#5";
-  // Major 7th ('9' or 'm') -> maj7
+  // Major 7th -> maj7
   else if (appState.modifiers.majorSeventh) quality = "maj7";
-  // Half-Diminished ('Escape' or 'Backspace') -> m7b5
+  // Half-Diminished -> m7b5
   else if (appState.modifiers.halfDiminished) quality = "m7b5";
-  // Major Triad ('Enter') -> M
+  // Minor 7th -> m7
+  else if (appState.modifiers.minorSeventh) quality = "m7";
+  // Major Triad -> M
   else if (appState.modifiers.major) quality = "M";
 
   // 3. Construct New Chord
@@ -625,6 +633,7 @@ window.addEventListener("keydown", (e) => {
     rootShiftUpModifiers.includes(e.key) ||
     majorSeventhModifiers.includes(e.key) ||
     halfDiminishedModifiers.includes(e.key) ||
+    minorSeventhModifiers.includes(e.key) ||
     majorModifiers.includes(e.key);
 
   const num = parseInt(e.key);
@@ -683,6 +692,7 @@ window.addEventListener("keydown", (e) => {
   if (rootShiftUpModifiers.includes(e.key)) { appState.modifiers.rootShiftUp = true; modChanged = true; updateModifierUI("rootShiftUp", true); }
   if (majorSeventhModifiers.includes(e.key)) { appState.modifiers.majorSeventh = true; modChanged = true; updateModifierUI("majorSeventh", true); }
   if (halfDiminishedModifiers.includes(e.key)) { appState.modifiers.halfDiminished = true; modChanged = true; updateModifierUI("halfDiminished", true); }
+  if (minorSeventhModifiers.includes(e.key)) { appState.modifiers.minorSeventh = true; modChanged = true; updateModifierUI("minorSeventh", true); }
   if (majorModifiers.includes(e.key)) { appState.modifiers.major = true; modChanged = true; updateModifierUI("major", true); }
 
   // Hot-Swap: if modifiers changed, update held chords
@@ -722,6 +732,7 @@ window.addEventListener("keyup", (e) => {
   if (rootShiftUpModifiers.includes(e.key)) { appState.modifiers.rootShiftUp = false; modChanged = true; updateModifierUI("rootShiftUp", false); }
   if (majorSeventhModifiers.includes(e.key)) { appState.modifiers.majorSeventh = false; modChanged = true; updateModifierUI("majorSeventh", false); }
   if (halfDiminishedModifiers.includes(e.key)) { appState.modifiers.halfDiminished = false; modChanged = true; updateModifierUI("halfDiminished", false); }
+  if (minorSeventhModifiers.includes(e.key)) { appState.modifiers.minorSeventh = false; modChanged = true; updateModifierUI("minorSeventh", false); }
   if (majorModifiers.includes(e.key)) { appState.modifiers.major = false; modChanged = true; updateModifierUI("major", false); }
 
   if (modChanged) {

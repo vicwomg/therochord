@@ -104,47 +104,51 @@
         </div>
 
         <div class="instructions">
-          <h3>Modifiers (Hold + Key)</h3>
+          <h3>Chord modifiers (Hold + Chord)</h3>
           <div class="modifier-grid">
             <div class="mod-item" id="mod-major">
-              <span class="key-badge">⏎</span> <span>Major Triad</span>
+              <span class="key-badge">q</span> <span>Major Triad</span>
             </div>
             <div class="mod-item" id="mod-minor">
-              <span class="key-badge">-</span> <span>Minor Triad</span>
+              <span class="key-badge">w</span> <span>Minor Triad</span>
             </div>
             <div class="mod-item" id="mod-dominant">
-              <span class="key-badge">d</span> <span class="key-badge">/</span>
+              <span class="key-badge">e</span>
               <span>Dominant 7th</span>
             </div>
             <div class="mod-item" id="mod-majorSixth">
-              <span class="key-badge">s</span> <span class="key-badge">8</span>
+              <span class="key-badge">a</span>
               <span>Major 6th</span>
             </div>
             <div class="mod-item" id="mod-majorSeventh">
-              <span class="key-badge">m</span> <span class="key-badge">9</span>
+              <span class="key-badge">s</span>
               <span>Major 7th</span>
             </div>
             <div class="mod-item" id="mod-diminished">
-              <span class="key-badge">o</span> <span class="key-badge">*</span>
+              <span class="key-badge">d</span>
               <span>Diminished 7th</span>
             </div>
             <div class="mod-item" id="mod-augmented">
-              <span class="key-badge">+</span> <span class="key-badge">=</span>
+              <span class="key-badge">z</span>
               <span>Augmented 7th</span>
             </div>
             <div class="mod-item" id="mod-halfDiminished">
-              <span class="key-badge">␛</span> <span class="key-badge">␡</span>
+              <span class="key-badge">x</span>
               <span>Half-Diminished</span>
             </div>
+            <div class="mod-item" id="mod-minorSeventh">
+              <span class="key-badge">c</span>
+              <span>Minor 7th</span>
+            </div>
           </div>
-          <h3>Root Note Modifiers (Hold + Key)</h3>
+          <h3>Root note modifiers (Hold + Chord)</h3>
           <div class="modifier-grid">
             <div class="mod-item" id="mod-rootShiftDown">
-              <span class="key-badge">,</span> <span class="key-badge">0</span>
+              <span class="key-badge">v</span>
               <span>Flat Root (b)</span>
             </div>
             <div class="mod-item" id="mod-rootShiftUp">
-              <span class="key-badge">.</span> <span class="key-badge">></span>
+              <span class="key-badge">b</span>
               <span>Sharp Root (#)</span>
             </div>
           </div>
@@ -160,6 +164,7 @@
             id="np-halfDiminished"
             title="Half-Diminished (Clear)"
           >
+            <span class="np-shortcut">clear/tab</span>
             Ø
           </button>
           <button
@@ -167,6 +172,7 @@
             id="np-dominant"
             title="Dominant 7th (/)"
           >
+            <span class="np-shortcut">/</span>
             7
           </button>
           <button
@@ -174,19 +180,25 @@
             id="np-diminished"
             title="Diminished 7th (*)"
           >
+            <span class="np-shortcut">*</span>
             Dim 7
           </button>
           <button class="np-btn btn-qual" id="np-minor" title="Minor Triad (-)">
+            <span class="np-shortcut">-</span>
             Minor
           </button>
 
           <!-- Row 2 -->
-          <button class="np-btn" id="np-key-7" data-note="7">vii°</button>
+          <button class="np-btn" id="np-key-7" data-note="7">
+            <span class="np-shortcut">7</span>
+            vii°
+          </button>
           <button
             class="np-btn btn-qual"
             id="np-majorSixth"
             title="Major 6th (8)"
           >
+            <span class="np-shortcut">8</span>
             Maj 6
           </button>
           <button
@@ -194,6 +206,7 @@
             id="np-majorSeventh"
             title="Major 7th (9)"
           >
+            <span class="np-shortcut">9</span>
             Maj 7
           </button>
           <button
@@ -201,23 +214,43 @@
             id="np-augmented"
             title="Augmented (+)"
           >
+            <span class="np-shortcut">+</span>
             Aug
           </button>
 
           <!-- Row 3 -->
-          <button class="np-btn" id="np-key-4" data-note="4">IV</button>
-          <button class="np-btn" id="np-key-5" data-note="5">V</button>
-          <button class="np-btn" id="np-key-6" data-note="6">vi</button>
+          <button class="np-btn" id="np-key-4" data-note="4">
+            <span class="np-shortcut">4</span>
+            IV
+          </button>
+          <button class="np-btn" id="np-key-5" data-note="5">
+            <span class="np-shortcut">5</span>
+            V
+          </button>
+          <button class="np-btn" id="np-key-6" data-note="6">
+            <span class="np-shortcut">6</span>
+            vi
+          </button>
 
           <!-- Row 4 -->
-          <button class="np-btn" id="np-key-1" data-note="1">I</button>
-          <button class="np-btn" id="np-key-2" data-note="2">ii</button>
-          <button class="np-btn" id="np-key-3" data-note="3">iii</button>
+          <button class="np-btn" id="np-key-1" data-note="1">
+            <span class="np-shortcut">1</span>
+            I
+          </button>
+          <button class="np-btn" id="np-key-2" data-note="2">
+            <span class="np-shortcut">2</span>
+            ii
+          </button>
+          <button class="np-btn" id="np-key-3" data-note="3">
+            <span class="np-shortcut">3</span>
+            iii
+          </button>
           <button
             class="np-btn btn-qual tall-y"
             id="np-major"
             title="Major Triad (Enter)"
           >
+            <span class="np-shortcut">↵</span>
             Major
           </button>
 
@@ -227,6 +260,7 @@
             id="np-rootShiftDown"
             title="Root Flat (0)"
           >
+            <span class="np-shortcut">0</span>
             ♭
           </button>
           <button
@@ -234,6 +268,7 @@
             id="np-rootShiftUp"
             title="Root Sharp (.)"
           >
+            <span class="np-shortcut">.</span>
             ♯
           </button>
         </div>
