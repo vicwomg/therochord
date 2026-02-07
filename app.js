@@ -74,7 +74,7 @@ function toggleBgEffect(isActive) {
 
   if (isActive) {
     // Randomly select image
-    const bgImages = ['howl.gif', 'ghost.gif'];
+    const bgImages = ['howl.gif', 'ghost.gif', 'owlman.gif', 'whale.gif'];
     const randomImage = bgImages[Math.floor(Math.random() * bgImages.length)];
 
     // RESTART ANIMATION HACK
