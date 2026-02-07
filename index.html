@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>therichord</title>
+    <title>therochord</title>
     <link rel="stylesheet" href="style.css" />
     <!-- Using esm.sh for module loading -->
     <script type="importmap">
@@ -23,7 +23,7 @@
     <div id="app">
       <header>
         <div class="title-row">
-          <h1>therichord</h1>
+          <h1>therochord</h1>
           <button id="help-btn" aria-label="Help">?</button>
         </div>
         <p></p>
@@ -56,13 +56,21 @@
 
       <div class="display">
         <button id="start-audio">
-          Start Audio Engine
-          <span style="font-size: 0.8em; opacity: 0.8; font-weight: normal"
+          Start audio engine
+          <span
+            id="start-audio-subtext"
+            style="font-size: 0.8em; opacity: 0.8; font-weight: normal"
             >(Press Enter)</span
           >
         </button>
         <div id="chord-info-container" style="display: none">
-          <h3 id="current-chord">-</h3>
+          <div class="chord-row">
+            <h3 id="current-chord">—</h3>
+            <button
+              id="mobile-theremin-btn"
+              aria-label="Activate Theremin Lead"
+            ></button>
+          </div>
           <div id="notes-display"></div>
         </div>
       </div>
@@ -336,24 +344,24 @@
     <div id="help-modal" class="modal-overlay" style="display: none">
       <div class="modal-content">
         <button id="close-modal" aria-label="Close">&times;</button>
-        <h2>How to play therichord</h2>
+        <h2>How to play therochord</h2>
         <p>
-          <strong>thericord</strong> turns your keyboard number keys (1-7) and
-          mouse into a unique chordal / theremin-style lead instrument. It is
-          designed to be used with a numerical keypad layout, but it can also be
-          used with a standard keyboard.
+          <strong>therochord</strong> turns your number keys and mouse into a
+          unique chordal accompaniment / theremin-style lead instrument.
         </p>
-
         <ul>
           <li>
             <strong>Mouse theremin:</strong> Click anywhere on the screen to
-            activate the theremin. Drag up and down to change pitch. The root
-            (green) and diatonic (white) notes are highlighted on the right
-            vertical bar.
+            activate the theremin. Drag up and down to change pitch. If you are
+            on a mobile device, you can press and hold the yellow button and
+            move your phone up and down for the same effect. The root (green)
+            and diatonic (white) notes are highlighted on the right vertical
+            bar.
           </li>
           <li>
             <strong>Play Chords:</strong> Press <code>1-7</code> to play
-            diatonic triads in the selected key. Hold to sustain the chord.
+            diatonic triad chords in the selected key. Hold to sustain the
+            chord.
           </li>
           <li>
             <strong>Modify:</strong> Hold a modifier key (like
@@ -362,25 +370,26 @@
           </li>
           <li>
             <strong>Transpose:</strong> Use the root ♯ and ♭ buttons to
-            transpose the current chord. This gets you the chords between the
-            diatonic chords.
+            transpose the current chord.
           </li>
           <li>
             <strong>Voice Leading:</strong> Tries to move notes as little as
-            possible between chords for a smooth sound. Can be toggled on and
-            off.
+            possible between chords for a smooth sound. This can be toggled on
+            and off.
           </li>
           <li>
-            <strong>Change keys:</strong> Use the dropdown to change keys, or
-            hold <code>Enter</code> and press <code>+</code> or <code>-</code>
+            <strong>Change key:</strong> Use the dropdown to change key
+            signatures, or hold <code>Enter</code> and press <code>+</code> or
+            <code>-</code>
             to shift the key up or down a semitone.
           </li>
         </ul>
 
         <div class="modal-footer">
           <p>
-            The numerical keypad is missing direct minor 6 and minor 7th
-            modifiers. You can alternatively access these chords by holding the
+            Note: the numerical keypad doesn't have minor 6 and minor 7 chord
+            modifier buttons. You can alternatively access these chords by
+            holding the
             <code>-</code> key along with the <code>/</code> key (minor 7) or
             <code>8</code> key (minor 6). If your numerical keypad has a
             delete/backspace key, this can also be used as a minor 7.

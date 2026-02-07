@@ -24,7 +24,8 @@ const appState = {
   physicalModifiers: new Set(), // Keys physically held down
   modReleaseTimeout: null,
   pendingChordStarts: {},
-  voiceLeadingEnabled: true
+  voiceLeadingEnabled: true,
+  mobileThereminEnabled: false
 };
 
 // modifier keys
@@ -123,6 +124,22 @@ function initAudio() {
   }).connect(reverb);
 
   console.log("Audio Initialized");
+
+  // Handle Motion Permission for iOS 13+
+  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission()
+      .then(permission => {
+        if (permission === 'granted') {
+          console.log("Motion permission granted");
+        } else {
+          console.warn("Motion permission denied");
+        }
+      })
+      .catch(err => {
+        console.error("Error requesting motion permission during initAudio:", err);
+      });
+  }
+
   appState.isAudioStarted = true;
   document.getElementById("start-audio").style.display = 'none';
   document.getElementById("chord-info-container").style.display = 'block';
@@ -398,6 +415,8 @@ function stopChord(degreeIndex) {
     // Check if any chords left active
     if (Object.keys(appState.activeVoicings).length === 0) {
       updateTint(null); // Fade out
+      document.getElementById("current-chord").innerText = "—";
+      document.getElementById("notes-display").innerHTML = "";
     }
 
     const keyEl = document.querySelector(`.key[data-note="${degreeIndex + 1}"]`);
@@ -649,22 +668,32 @@ document.getElementById("voice-leading-btn").addEventListener("click", (e) => {
   e.target.blur();
 });
 
-document.getElementById("layout-toggle-btn").addEventListener("click", (e) => {
+function updateLayoutUI(isNumpad) {
   const defaultInterface = document.getElementById("default-interface");
   const numpadInterface = document.getElementById("numpad-interface");
-  const isCurrentlyNumpad = numpadInterface.style.display === 'block';
+  const toggleBtn = document.getElementById("layout-toggle-btn");
 
-  if (isCurrentlyNumpad) {
-    defaultInterface.style.display = 'block';
-    numpadInterface.style.display = 'none';
-    e.target.innerText = "Layout: QWERTY";
-    e.target.classList.remove("active");
+  if (isNumpad) {
+    defaultInterface.style.display = "none";
+    numpadInterface.style.display = "block";
+    if (toggleBtn) {
+      toggleBtn.innerText = "Layout: NUMPAD";
+      toggleBtn.classList.add("active");
+    }
   } else {
-    defaultInterface.style.display = 'none';
-    numpadInterface.style.display = 'block';
-    e.target.innerText = "Layout: NUMPAD";
-    e.target.classList.add("active");
+    defaultInterface.style.display = "block";
+    numpadInterface.style.display = "none";
+    if (toggleBtn) {
+      toggleBtn.innerText = "Layout: QWERTY";
+      toggleBtn.classList.remove("active");
+    }
   }
+}
+
+document.getElementById("layout-toggle-btn").addEventListener("click", (e) => {
+  const numpadInterface = document.getElementById("numpad-interface");
+  const isCurrentlyNumpad = numpadInterface.style.display === "block";
+  updateLayoutUI(!isCurrentlyNumpad);
   e.target.blur();
 });
 
@@ -790,7 +819,7 @@ window.addEventListener("keyup", (e) => {
 
 function promptForAudioEngine(onInitiated) {
   if (!appState.isAudioStarted) {
-    alert("Click OK to confirm 'Start Audio Engine'");
+    alert("Click OK to confirm 'Start audio engine'");
     initAudio();
     return;
   }
@@ -897,6 +926,7 @@ document.querySelectorAll(".np-btn").forEach(btn => {
 const thereminContainer = document.getElementById("theremin-container");
 const thereminBar = document.getElementById("theremin-bar"); // Need this for ticks
 const pitchIndicator = document.getElementById("pitch-indicator");
+const mobileThereminBtn = document.getElementById("mobile-theremin-btn");
 
 let isThereminActive = false;
 
@@ -977,7 +1007,7 @@ window.addEventListener("mousedown", (e) => {
   // Check if clicking interactive elements to avoid conflict? 
   // The user requested "Pressing the left mouse button turns on playback".
   // We should probably allow it globally unless clicking a button?
-  if (e.target.tagName === 'BUTTON' || e.target.closest('.key') || e.target.closest('.np-btn')) return;
+  if (e.target.tagName === 'BUTTON' || e.target.closest('.key') || e.target.closest('.np-btn') || e.target.closest('.mod-key')) return;
 
   isThereminActive = true;
   const freq = getPitchFromY(e.clientY);
@@ -1045,3 +1075,101 @@ function updateThereminVisuals(y) {
   pitchIndicator.style.bottom = 'auto';
   pitchIndicator.style.transform = 'translate(-50%, -50%)'; // Center on cursor vertically
 }
+
+// -------------------------------------------------------------------
+// Mobile Theremin / Accelerometer Logic
+// -------------------------------------------------------------------
+
+if (mobileThereminBtn) {
+  const activateMobileTheremin = (e) => {
+    e.preventDefault();
+    if (!appState.isAudioStarted) {
+      alert("Please press 'Start audio engine' (Enter) before using the Theremin lead.");
+      return;
+    }
+
+    if (appState.mobileThereminEnabled) return;
+
+    appState.mobileThereminEnabled = true;
+    mobileThereminBtn.classList.add("active");
+
+    // Start the theremin sound
+    isThereminActive = true;
+    if (appState.thereminSynth) {
+      appState.thereminSynth.triggerAttack(THEREMIN_MIN_FREQ);
+    }
+    pitchIndicator.classList.add("active");
+    toggleBgEffect(true);
+    window.addEventListener("deviceorientation", handleOrientation);
+  };
+
+  const deactivateMobileTheremin = (e) => {
+    e.preventDefault();
+    if (!appState.mobileThereminEnabled) return;
+
+    appState.mobileThereminEnabled = false;
+    mobileThereminBtn.classList.remove("active");
+
+    // Stop the theremin sound
+    isThereminActive = false;
+    if (appState.thereminSynth) {
+      appState.thereminSynth.triggerRelease();
+    }
+    pitchIndicator.classList.remove("active");
+    toggleBgEffect(false);
+    window.removeEventListener("deviceorientation", handleOrientation);
+  };
+
+  mobileThereminBtn.addEventListener("mousedown", activateMobileTheremin);
+  mobileThereminBtn.addEventListener("touchstart", activateMobileTheremin);
+
+  mobileThereminBtn.addEventListener("mouseup", deactivateMobileTheremin);
+  mobileThereminBtn.addEventListener("touchend", deactivateMobileTheremin);
+  mobileThereminBtn.addEventListener("mouseleave", deactivateMobileTheremin);
+}
+
+function handleOrientation(event) {
+  if (!appState.mobileThereminEnabled || !appState.thereminSynth) return;
+
+  // 'beta' is the front-to-back tilt in degrees [-180, 180]
+  // We'll map a comfortable range (e.g., 30 to 90 degrees) to the pitch.
+  let tilt = event.beta;
+
+  // Clamp tilt
+  const minTilt = 30;
+  const maxTilt = 80;
+  const clampedTilt = Math.max(minTilt, Math.min(tilt, maxTilt));
+
+  // Normalize (0 to 1)
+  const normalized = (clampedTilt - minTilt) / (maxTilt - minTilt);
+
+  // Invert if needed: 0 is bottom (min freq), 1 is top (max freq)
+  // Higher tilt (closer to 90) = Higher pitch
+
+  const freq = THEREMIN_MIN_FREQ * Math.pow(THEREMIN_MAX_FREQ / THEREMIN_MIN_FREQ, normalized);
+  appState.thereminSynth.setNote(freq);
+
+  // Update visuals using normalized value for the bar percentage
+  // 1 - normalized because the bar is top-down (0 is top?)
+  // Wait, getPitchFromY maps 1.0 to top, 0.0 to bottom.
+  // Our normalized 1.0 is max freq (top).
+  updateThereminVisualsFromNormalized(normalized);
+}
+
+function updateThereminVisualsFromNormalized(normalized) {
+  // percentage from top (0% is top, 100% is bottom)
+  const percent = (1 - normalized) * 100;
+  pitchIndicator.style.top = `${percent}%`;
+  pitchIndicator.style.bottom = 'auto';
+  pitchIndicator.style.transform = 'translate(-50%, -50%)';
+}
+// Initialize Layout Default
+window.addEventListener("load", () => {
+  if (window.innerWidth < 600) {
+    updateLayoutUI(true);
+    const subtext = document.getElementById("start-audio-subtext");
+    if (subtext) {
+      subtext.innerText = "(please turn off silent mode on your phone)";
+    }
+  }
+});
