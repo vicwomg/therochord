@@ -6,7 +6,13 @@
 
 I got the idea from buying a $4 numerical keypad at a thrift store and realizing it would be an interesting way to play chords. I couldn't think of any chordal instruments that operate on the "Nashville Number System" (which is how I tend to think of them in my head) so I decided to create one. Once that was working how I liked, I wondered if there was a way to simultaneously play a lead voice without needing to press a lot more buttons. It turns out that the mouse, trackpad, and mobile device's accelerometer/gyroscope are all great for this.
 
-## How to Launch
+The name is a portmanteau of "theremin" and "chord". But "thero" is a prefix that means "beast" or "wild animal" in Greek, which I thought was fitting for the howl-like lead voice.
+
+## Demo
+
+[https://coyotote.computer/therochord](https://coyotote.computer/therochord)
+
+## How to Launch Locally
 
 therochord is a static web application. The easiest way to run it locally is using a simple Python web server.
 
