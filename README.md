@@ -77,6 +77,7 @@ By default, keys `1-7` play triads. Hold these modifiers to change the chord qua
 - **Root Sharp (♯)**: Hold `R` (or `.` on Numpad) while playing a chord.
 - **Root Flat (♭)**: Hold `F` (or `0` on Numpad) while playing a chord.
 - **Change Global Key**: Use the dropdown menu, or hold `Enter` and press `+` or `-` to shift the key up or down a semitone.
+- **Jump to Key**: Hold `K` and press a key to set the key directly: `1`=C, `2`=D♭, `3`=D, `4`=E♭, `5`=E, `6`=F, `7`=G♭, `8`=G, `9`=A♭, `0`=A, `-`=B♭, `+`=B. Release `K` to revert to the regular function of number keys.
 
 ---
 
