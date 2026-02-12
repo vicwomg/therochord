@@ -26,8 +26,7 @@ const appState = {
   pendingChordStarts: {},
   voiceLeadingEnabled: true,
   mobileThereminEnabled: false,
-  keyChangeKPending: false,  // k + number/0/-/+ to change key
-  keyChangeKTimeout: null
+  keyChangeKPending: false  // k + number/0/-/+ to change key
 };
 
 // modifier keys
@@ -723,9 +722,6 @@ document.getElementById("layout-toggle-btn").addEventListener("click", (e) => {
   e.target.blur();
 });
 
-/** Max ms to wait for the second key (1–9, 0, -, +) after pressing k. After this, the combo is cancelled so number keys go back to playing chords. */
-const KEY_CHANGE_COMBO_MS = 1500;
-
 // k + number: 1=C, 2=Db, 3=D, 4=Eb, 5=E, 6=F, 7=Gb, 8=G, 9=Ab, 0=A, -=Bb, +=B
 const KEY_CHANGE_COMBO_MAP = {
   "1": 0,
@@ -758,28 +754,20 @@ function setKeyByIndex(index) {
 window.addEventListener("keydown", (e) => {
   if (e.repeat) return; // Prevent auto-repeat re-triggering globally
 
-  // Key-change combo: k then 1-9, 0, -, +
+  // Key-change combo: k then 1-9, 0, -, + (cleared on k keyup)
   if (appState.keyChangeKPending) {
     const idx = KEY_CHANGE_COMBO_MAP[e.key];
     if (idx !== undefined) {
       e.preventDefault();
-      clearTimeout(appState.keyChangeKTimeout);
       appState.keyChangeKPending = false;
-      appState.keyChangeKTimeout = null;
       setKeyByIndex(idx);
       return;
     }
     appState.keyChangeKPending = false;
-    if (appState.keyChangeKTimeout) clearTimeout(appState.keyChangeKTimeout);
-    appState.keyChangeKTimeout = null;
   }
   if (e.key === "k" || e.key === "K") {
     appState.keyChangeKPending = true;
     e.preventDefault();
-    appState.keyChangeKTimeout = setTimeout(() => {
-      appState.keyChangeKPending = false;
-      appState.keyChangeKTimeout = null;
-    }, KEY_CHANGE_COMBO_MS);
     return;
   }
 
@@ -885,6 +873,7 @@ window.addEventListener("keyup", (e) => {
   if (minorSeventhModifiers.includes(e.key)) { setModifier("minorSeventh", false); }
   if (minorSixModifiers.includes(e.key)) { setModifier("minorSix", false); }
   if (majorModifiers.includes(e.key)) { setModifier("major", false); }
+  if (e.key === "k" || e.key === "K") { appState.keyChangeKPending = false; }
 
   const num = parseInt(e.key);
   if (!isNaN(num) && num >= 1 && num <= 7) {
